@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,6 +13,8 @@ namespace WindowsFormsAppComponent
 {
     public partial class Form1 : Form
     {
+        int i = 1;
+        double SUM = 0;
         public Form1()
         {
             InitializeComponent();
@@ -19,72 +22,104 @@ namespace WindowsFormsAppComponent
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBox1.Items.Add("...");
             
-            Form2 f2 =new Form2();
-            f2.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string ch="";
-            if (checkBox1.Checked)
+            string name = "";
+            double num = 0, pirce = 0,sum=0;
+            if (comboBox1.Text.Length > 0 && textBox1.Text.Length > 0 && numericUpDown1.Value != 0)
             {
-                ch = "1";
+                name = comboBox1.Text;
+                num = Convert.ToDouble(numericUpDown1.Value);
+                pirce = Convert.ToDouble(textBox1.Text);
+                sum = pirce * num;
+                SUM += sum;
+                dataGridView1.Rows.Add(i, name, num, pirce,sum);
+                numericUpDown1.Value = 0;
+                textBox1.Text = "";
+                i++;
             }
-            if (checkBox2.Checked)
+            else
             {
-                ch += "2";
+                string ch="กรุณา";
+                if(comboBox1.Text.Length < 1)
+                {
+                    ch += "เลือกรายการ";
+                }
+                if(numericUpDown1.Value == 0)
+                {
+                    ch += " ใส่จำนวนสินค่า";
+                }
+                if(textBox1.Text.Length < 1)
+                {
+                    ch += " ใส่ราคาสินค้า";
+                }
+                MessageBox.Show(ch);
             }
-            if(checkBox3.Checked)
-            {
-                ch += "3";
-            }
-            textBox1.Text = ch;
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string ch = "";
-           
-            if (radioButton1.Checked)
+
+            double vat = 0,vatmoney=0, sumvat = 0;
+            double discout = 0, sumfor = 0;
+            for (int j = 0; j < dataGridView1.Rows.Count - 1; j++)
             {
-                ch = "1";
+                sumfor += Convert.ToDouble(dataGridView1.Rows[j].Cells[4].Value.ToString());
             }
-            else if (radioButton2.Checked)
+
+            if (radioButton1.Checked || radioButton2.Checked)
             {
-                ch = "2";
+                if (radioButton2.Checked)
+                {
+                    vat = 0.10;
+                }
+                if (radioButton1.Checked)
+                {
+                    vat = 0.05;
+                }
+                if (checkBox1.Checked)
+                {
+                    vat += 0.05;
+                }
+                vatmoney = sumfor * vat;
+                
+                
+                sumvat = sumfor - vatmoney;
+                textBox3.Text = vatmoney.ToString();
+                textBox4.Text = sumvat.ToString();
             }
             else
             {
-                ch = "3";
-            }
-            textBox2.Text = ch;
-        }
+                vat = 0;
+                if (checkBox1.Checked)
+                {
+                    vat += 0.05;
+                }
+               
+                vatmoney = sumfor * vat;
+                sumvat = sumfor - vatmoney;
+                if(sumfor!=0)
+                {
+                    textBox3.Text = vatmoney.ToString();
+                    textBox4.Text = sumvat.ToString();
+                }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            if (textBox3.Text.Length > 0)
+               
+            }
+            if(SUM != 0 && sumfor != 0)
             {
-                listBox1.Items.Add(textBox3.Text);
+                textBox2.Text = sumfor.ToString();
             }
-            textBox3.Text = "";
-           
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            textBox3.Text = "";
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            string cs="", set="";
-            dataGridView1.Rows.Add("...", "..", ".");
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
+            
 
         }
     }
